@@ -10,7 +10,10 @@ https://docs.djangoproject.com/en/4.1/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
+from .settings.base import env
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "authors_heaven.settings")
+os.environ.setdefault(
+    "DJANGO_SETTINGS_MODULE", f"authors_heaven.settings.{env('ENVIRONMENT')}"
+)
 
 application = get_wsgi_application()
