@@ -8,3 +8,5 @@ psycopg2-binary==2.9.5
 flake8==6.0.0
 black==22.10.0
 isort==5.10.1
+django-phonenumber-field==7.0.0
+phonenumbers==8.13.1
