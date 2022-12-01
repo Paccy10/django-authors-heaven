@@ -2,11 +2,14 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from authors_heaven.settings.base import env
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "authors_heaven.settings")
+    os.environ.setdefault(
+        "DJANGO_SETTINGS_MODULE", f"authors_heaven.settings.{env('ENVIRONMENT')}"
+    )
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
