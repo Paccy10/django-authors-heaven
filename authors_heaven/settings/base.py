@@ -1,5 +1,8 @@
 import environ
 from pathlib import Path
+import logging
+import logging.config
+from django.utils.log import DEFAULT_LOGGING
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -120,10 +123,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SITE_ID = 1
 
 # Configure loggers
-import logging
-import logging.config
-from django.utils.log import DEFAULT_LOGGING
-
 logger = logging.getLogger(__name__)
 LOG_LEVEL = "INFO"
 
@@ -155,3 +154,5 @@ logging.config.dictConfig(
         },
     }
 )
+
+AUTH_USER_MODEL = "users.User"
