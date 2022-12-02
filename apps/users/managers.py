@@ -46,7 +46,7 @@ class UserManager(BaseUserManager):
         )
 
         user.set_password(password)
-        user.is_active = True
+        user.is_active = False
         user.is_staff = False
         user.is_admin = False
         user.is_superuser = False
