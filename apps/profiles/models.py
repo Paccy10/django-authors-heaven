@@ -1,11 +1,11 @@
-from django_countries.fields import CountryField
-from django.db import models
-from django.contrib.auth import get_user_model
-from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
-from ..common.models import BaseModel
+from django.contrib.auth import get_user_model
+from django.db import models
+from django_countries.fields import CountryField
+from phonenumber_field.modelfields import PhoneNumberField
 
+from ..common.models import BaseModel
 
 User = get_user_model()
 
