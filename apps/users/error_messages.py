@@ -18,4 +18,15 @@ errors = {
         "required": "The last name is required",
         "blank": "The last name can't be blank",
     },
+    "password": {
+        "required": "The password is required",
+        "blank": "The password can't be blank",
+        "min_length": "The password must have at least 8 characters",
+        "weak": "The password must contain at least 1 uppercase, 1 lowercase and 1 special character",
+    },
+    "confirm_password": {
+        "required": "The confirm password field is required",
+        "blank": "The confirm password field can't be blank",
+        "invalid": "The confirm password field doesn't match password field",
+    },
 }
