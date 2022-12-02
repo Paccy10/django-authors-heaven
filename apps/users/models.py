@@ -32,5 +32,4 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     @property
     def get_full_name(self):
-        return f"{self.first_name.title()} {self.middle_name.title() if self.middle_name else ''} \
-            {self.last_name.title()}"
+        return f"{self.first_name}{f' {self.middle_name }'if self.middle_name else ''} {self.last_name}"
