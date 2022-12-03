@@ -1,0 +1,13 @@
+sudo: required
+
+services:
+  - docker
+
+before_script: 
+  - make build
+
+script: 
+  - make flake8
+  - make black-check
+  - make isort-check
+  - make test

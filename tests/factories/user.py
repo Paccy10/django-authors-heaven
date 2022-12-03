@@ -7,7 +7,6 @@ from apps.users.models import User
 faker = FakerFatcory.create()
 
 
-@factory.django.mute_signals(post_save)
 class UserFactory(factory.django.DjangoModelFactory):
     """User factory"""
 
