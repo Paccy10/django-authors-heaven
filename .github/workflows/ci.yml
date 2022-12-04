@@ -28,7 +28,11 @@ jobs:
       
       - name: Build image
         run: make build
-      
+
+  check-quality:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Check imports
         run: make isort-check
       
@@ -37,6 +41,15 @@ jobs:
 
       - name: Check code quality
         run: make flake8
-
+  
+  test:
+    needs:
+      - build
+      - check-quality
+    runs-on: ubuntu-latest
+    steps:
       - name: Run tests and generate coverage report
         run: make test-xml
+
+      - name: Docker Compose Down
+        run: make down-v
