@@ -33,12 +33,16 @@ jobs:
         run: docker compose ps -a
 
       - name: Check code quality
+        env:
+            COMPOSE_INTERACTIVE_NO_CLI: 1
         run: |
           make isort-check
           make flake8
           make black-check
 
       - name: Run tests and generate coverage report
+        env:
+            COMPOSE_INTERACTIVE_NO_CLI: 1
         run: make test-xml
 
       - name: Docker Compose Down
