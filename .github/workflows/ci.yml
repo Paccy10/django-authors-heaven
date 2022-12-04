@@ -1,0 +1,49 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Add environment variables to .env file
+        run: |
+          echo ENVIRONMENT=${{ secrets.ENVIRONMENT }} >> .env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          echo DEBUG=${{ secrets.DEBUG }} >> .env
+          echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+          echo PG_ENGINE=${{ secrets.PG_ENGINE }} >> .env
+          echo PG_USER=${{ secrets.PG_USER }} >> .env
+          echo PG_PASSWORD=${{ secrets.PG_PASSWORD }} >> .env
+          echo PG_DB=${{ secrets.PG_DB }} >> .env
+          echo PG_HOST=${{ secrets.PG_HOST }} >> .env
+          echo PG_PORT=${{ secrets.PG_PORT }} >> .env
+      
+      - name: Build image
+        run: make build
+      
+      - name: Check imports
+        run: make isort-check
+
+      - name: Check code quality
+        run: make flake8
+      
+      - name: Check linting errors
+        run: make black-check
+
+      - name: Run tests and generate coverage report
+        run: make test-xml
+
+      - name: Coverage
+        uses: paambaati/codeclimate-action@v2.5.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: docker compose exec api coverage xml

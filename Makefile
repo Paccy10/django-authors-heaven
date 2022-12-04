@@ -43,6 +43,9 @@ test:
 test-html:
 	docker compose exec api pytest -p no:warnings --cov=. --cov-report html
 
+test-xml:
+	docker compose exec api pytest -p no:warnings --cov=. --cov-report xml
+
 flake8:
 	docker compose exec api flake8 .
 
@@ -56,10 +59,10 @@ black:
 	docker compose exec api black --exclude=migrations .
 
 isort-check:
-	docker compose exec api isort  . --check-only --skip venv --skip migrations
+	docker compose exec api isort . --check-only --skip venv --skip migrations
 
 isort-diff:
-	docker compose exec api isort  . --diff --skip venv --skip migrations
+	docker compose exec api isort . --diff --skip venv --skip migrations
 
 isort:
-	docker compose exec api isort  . --skip venv --skip migrations
+	docker compose exec api isort . --skip venv --skip migrations

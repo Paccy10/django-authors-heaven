@@ -1,3 +1,7 @@
+![Build Status](https://github.com/Paccy10/django-authors-heaven/actions/workflows/ci.yml/badge.svg)
+[![Maintainability](https://api.codeclimate.com/v1/badges/34dd57e7c9850a09c6c5/maintainability)](https://codeclimate.com/github/Paccy10/django-authors-heaven/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/34dd57e7c9850a09c6c5/test_coverage)](https://codeclimate.com/github/Paccy10/django-authors-heaven/test_coverage)
+
 # Authors Haven - A Social platform for the creative at heart.
 
 ## Vision
