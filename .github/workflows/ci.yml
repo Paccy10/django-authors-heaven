@@ -29,14 +29,14 @@ jobs:
       - name: Build image
         run: make build
       
-      # - name: Check imports
-      #   run: make isort-check
-
-      # - name: Check code quality
-      #   run: make flake8
+      - name: Check imports
+        run: make isort-check
       
-      # - name: Check linting errors
-      #   run: make black-check
+      - name: Check linting errors
+        run: make black-check
+
+      - name: Check code quality
+        run: make flake8
 
       - name: Run tests and generate coverage report
         run: make test-xml
