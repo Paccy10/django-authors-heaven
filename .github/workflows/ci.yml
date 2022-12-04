@@ -29,11 +29,21 @@ jobs:
       - name: Build image
         run: make build
 
-      # - name: Check code quality
-      #   run: |
-      #     make flake8
-      #     make black-check
-      #     make isort-check
+      - name: Check Running Containers
+        run: docker compose ps -a
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check code quality
+        run: |
+          make flake8
+          make black-check
+          make isort-check
 
       - name: Run tests and generate coverage report
         run: make test-xml
+
+      - name: Docker Compose Down
+        run: make down-v
