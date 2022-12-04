@@ -30,7 +30,7 @@ jobs:
         run: make build
       
       - name: Check logs
-        run: make logs
+        run: make show-logs
 
       - name: Check code quality
         run: make flake8
