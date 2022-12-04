@@ -28,23 +28,15 @@ jobs:
       
       - name: Build image
         run: make build
+      
+      # - name: Check imports
+      #   run: make isort-check
 
-      - name: Check Running Containers
-        run: docker compose ps -a
-
-      - name: Check code quality
-        env:
-            COMPOSE_INTERACTIVE_NO_CLI: 1
-        run: |
-          make isort-check
-          make flake8
-          make black-check
+      # - name: Check code quality
+      #   run: make flake8
+      
+      # - name: Check linting errors
+      #   run: make black-check
 
       - name: Run tests and generate coverage report
-        env:
-            COMPOSE_INTERACTIVE_NO_CLI: 1
         run: make test-xml
-
-      - name: Docker Compose Down
-        run: make down-v
-  
