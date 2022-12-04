@@ -43,6 +43,9 @@ test:
 test-html:
 	docker compose exec api pytest -p no:warnings --cov=. --cov-report html
 
+test-xml:
+	docker compose exec api pytest -p no:warnings --cov=. --cov-report xml
+
 flake8:
 	docker compose exec api flake8 .
 
