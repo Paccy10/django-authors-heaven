@@ -1,8 +1,9 @@
-from rest_framework import serializers
-from .error_messages import errors
 from django.core.validators import RegexValidator
-from .models import User
+from rest_framework import serializers
+
 from ..common.utils import validate_unique_value
+from .error_messages import errors
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):

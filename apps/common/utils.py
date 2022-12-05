@@ -1,7 +1,6 @@
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.exceptions import APIException
-
-from django.db.models import Q
 
 
 class ConflictException(APIException):

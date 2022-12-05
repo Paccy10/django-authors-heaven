@@ -1,4 +1,5 @@
-from rest_framework import mixins, generics
+from rest_framework import generics, mixins
+
 from .models import User
 from .serializers import UserSerializer
 

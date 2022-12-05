@@ -1,8 +1,10 @@
-from apps.users.error_messages import errors
-from django.urls import reverse
 import json
-from tests.constants import JSON_CONTENT_TYPE
+
 import pytest
+from django.urls import reverse
+
+from apps.users.error_messages import errors
+from tests.constants import JSON_CONTENT_TYPE
 
 
 @pytest.mark.django_db
