@@ -19,14 +19,13 @@ def validate_unique_value(**kwargs):
     instance = kwargs["instance"]
     query = {field: value}
 
+    row = model.objects.filter(**query).first()
+
     # this works on updating
-    if instance:
-        if model.objects.filter(
-            ~Q(pkid=instance.pkid),
-            **query,
-        ).exists():
+    if row and instance:
+        if row.pkid != instance.pkid:
             raise ConflictException(errors[field]["unique"])
 
-    else:
-        if model.objects.filter(**query).exists():
-            raise ConflictException(errors[field]["unique"])
+    # this works on first creation
+    if row and not instance:
+        raise ConflictException(errors[field]["unique"])

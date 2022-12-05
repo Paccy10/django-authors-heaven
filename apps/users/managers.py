@@ -9,6 +9,11 @@ class UserManager(BaseUserManager):
     """Custom user manager"""
 
     def email_validator(self, email):
+        if not email:
+            raise ValueError(errors["email"]["required"])
+
+        email = self.normalize_email(email)
+
         try:
             validate_email(email)
         except ValidationError:
@@ -24,11 +29,7 @@ class UserManager(BaseUserManager):
         if not extra_fields["last_name"]:
             raise ValueError(errors["last_name"]["required"])
 
-        if email:
-            email = self.normalize_email(email)
-            self.email_validator(email)
-        else:
-            raise ValueError(errors["email"]["required"])
+        self.email_validator(email)
 
         if not password:
             raise ValueError(errors["password"]["required"])
