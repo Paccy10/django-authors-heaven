@@ -1,5 +1,6 @@
 import pytest
 from pytest_factoryboy import register
+from rest_framework.test import APIClient
 
 from .factories.profile import ProfileFactory
 from .factories.user import UserFactory
@@ -24,3 +25,8 @@ def super_user(db, user_factory):
 def profile(db, profile_factory):
     user_profile = profile_factory.create()
     return user_profile
+
+
+@pytest.fixture
+def api_client():
+    return APIClient()

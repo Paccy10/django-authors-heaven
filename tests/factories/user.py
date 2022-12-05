@@ -1,5 +1,4 @@
 import factory
-from django.db.models.signals import post_save
 from faker import Factory as FakerFatcory
 
 from apps.users.models import User
@@ -7,7 +6,6 @@ from apps.users.models import User
 faker = FakerFatcory.create()
 
 
-@factory.django.mute_signals(post_save)
 class UserFactory(factory.django.DjangoModelFactory):
     """User factory"""
 

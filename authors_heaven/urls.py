@@ -1,8 +1,10 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
 
 urlpatterns = [
     path("management/", admin.site.urls),
+    path("api/v1/", include("apps.common.urls")),
 ]
 
 admin.site.site_header = "Authors Heaven API"
