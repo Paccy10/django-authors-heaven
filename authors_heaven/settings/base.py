@@ -37,7 +37,12 @@ DJANGO_APPS = [
     "django.contrib.sites",
 ]
 
-THIRD_PARTY_APPS = ["rest_framework", "django_filters", "django_countries"]
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "django_filters",
+    "django_countries",
+    "drf_yasg",
+]
 
 LOCAL_APPS = ["apps.common", "apps.users", "apps.profiles"]
 
@@ -149,3 +154,10 @@ logging.config.dictConfig(
 )
 
 AUTH_USER_MODEL = "users.User"
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    },
+    "LOGIN_URL": "/management/login/",
+    "LOGOUT_URL": "/management/logout/",
+}
