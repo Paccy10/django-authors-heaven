@@ -1,17 +1,17 @@
-from rest_framework import generics, mixins
+import django_rq
+import jwt
+from django.template.loader import get_template
+from django.urls import reverse
+from rest_framework import generics, mixins, status
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
+from authors_heaven.settings.base import env
+
+from ..common.utils import send_email
+from .error_messages import errors
 from .models import User
 from .serializers import UserSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
-import django_rq
-from django.template.loader import get_template
-from ..common.utils import send_email
-from django.urls import reverse
-import jwt
-from authors_heaven.settings.base import env
-from rest_framework import status
-from rest_framework.response import Response
-from .error_messages import errors
 
 
 class UserSignupView(mixins.CreateModelMixin, generics.GenericAPIView):

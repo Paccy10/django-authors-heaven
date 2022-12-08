@@ -1,7 +1,7 @@
+import datetime
 import logging
 import logging.config
 from pathlib import Path
-import datetime
 
 import environ
 from django.utils.log import DEFAULT_LOGGING

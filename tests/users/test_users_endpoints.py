@@ -1,15 +1,15 @@
+import datetime
 import json
+from time import sleep
+from unittest.mock import MagicMock
 
+import django_rq
 import pytest
 from django.urls import reverse
-import django_rq
-from unittest.mock import MagicMock
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.error_messages import errors
 from tests.constants import JSON_CONTENT_TYPE
-from rest_framework_simplejwt.tokens import RefreshToken
-import datetime
-from time import sleep
 
 
 @pytest.mark.django_db
