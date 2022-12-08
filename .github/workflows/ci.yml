@@ -42,12 +42,8 @@ jobs:
         run: make test-xml
 
       - name: Coverage
-        uses: amancevice/setup-code-climate@main
-        with:
+        uses: paambaati/codeclimate-action@v2.5.0
+        env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-
-      - run: cc-test-reporter before-build
-
-      - run: docker compose exec api coverage xml
-
-      - run: cc-test-reporter after-build
+        with:
+          coverageCommand: docker compose exec api coverage xml
