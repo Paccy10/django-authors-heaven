@@ -47,4 +47,3 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: docker compose exec api coverage xml
-          debug: true
