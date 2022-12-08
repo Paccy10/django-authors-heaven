@@ -37,7 +37,12 @@ DJANGO_APPS = [
     "django.contrib.sites",
 ]
 
-THIRD_PARTY_APPS = ["rest_framework", "django_filters", "django_countries"]
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "django_filters",
+    "django_countries",
+    "drf_yasg",
+]
 
 LOCAL_APPS = ["apps.common", "apps.users", "apps.profiles"]
 
@@ -120,6 +125,20 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Database
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+
+DATABASES = {
+    "default": {
+        "ENGINE": env("PG_ENGINE"),
+        "NAME": env("PG_DB"),
+        "USER": env("PG_USER"),
+        "PASSWORD": env("PG_PASSWORD"),
+        "HOST": env("PG_HOST"),
+        "PORT": env("PG_PORT"),
+    }
+}
+
 SITE_ID = 1
 
 # Configure loggers
@@ -149,3 +168,10 @@ logging.config.dictConfig(
 )
 
 AUTH_USER_MODEL = "users.User"
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    },
+    "LOGIN_URL": "/management/login/",
+    "LOGOUT_URL": "/management/logout/",
+}
