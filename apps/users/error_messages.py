@@ -29,4 +29,8 @@ errors = {
         "blank": "The confirm password field can't be blank",
         "invalid": "The confirm password field doesn't match password field",
     },
+    "token": {
+        "expired": "The token is expired",
+        "invalid": "The token is invalid",
+    },
 }

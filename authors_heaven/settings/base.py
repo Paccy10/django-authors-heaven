@@ -1,6 +1,7 @@
 import logging
 import logging.config
 from pathlib import Path
+import datetime
 
 import environ
 from django.utils.log import DEFAULT_LOGGING
@@ -42,6 +43,8 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "django_countries",
     "drf_yasg",
+    "django_rq",
+    "rest_framework_simplejwt",
 ]
 
 LOCAL_APPS = ["apps.common", "apps.users", "apps.profiles"]
@@ -175,3 +178,31 @@ SWAGGER_SETTINGS = {
     "LOGIN_URL": "/management/login/",
     "LOGOUT_URL": "/management/logout/",
 }
+
+# Redis Queue
+RQ_QUEUES = {
+    "default": {
+        "HOST": env("REDIS_HOST"),
+        "PORT": env("REDIS_PORT"),
+        "DB": 0,
+        "DEFAULT_TIMEOUT": 360,
+    },
+}
+
+# Mail
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+
+# REST_FRAMEWORK
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ]
+}
+
+SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=1)}

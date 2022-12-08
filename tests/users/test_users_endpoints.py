@@ -2,9 +2,14 @@ import json
 
 import pytest
 from django.urls import reverse
+import django_rq
+from unittest.mock import MagicMock
 
 from apps.users.error_messages import errors
 from tests.constants import JSON_CONTENT_TYPE
+from rest_framework_simplejwt.tokens import RefreshToken
+import datetime
+from time import sleep
 
 
 @pytest.mark.django_db
@@ -21,6 +26,8 @@ class TestUserSignupEndpoint:
     }
 
     def test_user_signup_succeeds(self, api_client):
+        django_rq.enqueue = MagicMock(return_value=None)
+
         data = self.data.copy()
         data = json.dumps(data)
         response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
@@ -148,3 +155,38 @@ class TestUserSignupEndpoint:
             errors["password"]["weak"],
             errors["password"]["min_length"],
         ]
+
+
+@pytest.mark.django_db
+class TestUserVerificationEndpoint:
+    """Test user verification endpoint"""
+
+    url = reverse("verify")
+
+    def test_user_verification_succeeds(self, api_client, base_user):
+        token = RefreshToken.for_user(base_user).access_token
+        response = api_client.get(
+            f"{self.url}?token={str(token)}", content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 200
+        assert response.json()["is_active"] is True
+
+    def test_user_verification_with_invalid_token_fails(self, api_client, base_user):
+        response = api_client.get(
+            f"{self.url}?token=token", content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["token"] == [errors["token"]["invalid"]]
+
+    def test_user_verification_with_expired_token_fails(self, api_client, base_user):
+        token = RefreshToken.for_user(base_user).access_token
+        token.set_exp(lifetime=datetime.timedelta(seconds=1))
+        sleep(2)
+        response = api_client.get(
+            f"{self.url}?token={str(token)}", content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["token"] == [errors["token"]["expired"]]

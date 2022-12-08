@@ -15,3 +15,5 @@ pytest-factoryboy==2.5.1
 Faker==15.3.4
 pytest-cov==2.12.1
 drf-yasg==1.21.4
+django-rq==2.6.0
+djangorestframework-simplejwt==5.0.0

@@ -1,6 +1,6 @@
-from django.db.models import Q
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from django.core.mail import EmailMessage
 
 
 class ConflictException(APIException):
@@ -29,3 +29,9 @@ def validate_unique_value(**kwargs):
     # this works on first creation
     if row and not instance:
         raise ConflictException(errors[field]["unique"])
+
+
+def send_email(subject, message, to):
+    email_message = EmailMessage(subject, message, to=to)
+    email_message.content_subtype = "html"
+    email_message.send()
