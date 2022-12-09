@@ -28,22 +28,25 @@ jobs:
       
       - name: Build image
         run: make build
+
+      - name: Check logs
+        run: make show-logs
       
-      - name: Check imports
-        run: make isort-check
+      # - name: Check imports
+      #   run: make isort-check
 
-      - name: Check code quality
-        run: make flake8
+      # - name: Check code quality
+      #   run: make flake8
       
-      - name: Check linting errors
-        run: make black-check
+      # - name: Check linting errors
+      #   run: make black-check
 
-      - name: Run tests and generate coverage report
-        run: make test-xml
+      # - name: Run tests and generate coverage report
+      #   run: make test-xml
 
-      - name: Coverage
-        uses: paambaati/codeclimate-action@v2.5.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: docker compose exec api coverage xml
+      # - name: Coverage
+      #   uses: paambaati/codeclimate-action@v2.5.0
+      #   env:
+      #     CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      #   with:
+      #     coverageCommand: docker compose exec api coverage xml
