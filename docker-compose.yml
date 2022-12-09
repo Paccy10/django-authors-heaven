@@ -16,7 +16,6 @@ services:
       - .env
     depends_on:
       - postgres_db
-      - redis
     networks:
       - authors-heaven
   
