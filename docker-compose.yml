@@ -32,6 +32,31 @@ services:
     networks:
       - authors-heaven 
 
+  redis:
+    image: redis:6-alpine
+    entrypoint: redis-server --appendonly no --save ""
+    ports:
+      - 6379:6379
+    networks:
+      - authors-heaven
+
+  worker:
+    build:
+      context: .
+      dockerfile: ./docker/local/django/Dockerfile
+    command: /worker
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - api
+    networks:
+      - authors-heaven
+
 networks:
   authors-heaven:
     driver: bridge

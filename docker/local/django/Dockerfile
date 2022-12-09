@@ -5,7 +5,7 @@ RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
-LABEL description="DEvelopment image for Authors Heaven Project"
+LABEL description="Development image for Authors Heaven Project"
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -29,5 +29,9 @@ RUN chmod +x /entrypoint
 COPY ./docker/local/django/start /start
 RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
+
+COPY ./docker/local/django/worker /worker
+RUN sed -i 's/\r$//g' /worker
+RUN chmod +x /worker
 
 ENTRYPOINT [ "/entrypoint" ]

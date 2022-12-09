@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .content {
+        background: white;
+        max-width: 600px;
+        padding: 23px 23px 50px;
+        margin-top: 33px;
+        margin-bottom: 30px;
+        border: 1px solid rgb(232, 232, 232);
+        border-radius: 5px;
+        box-shadow: rgb(128, 93, 93) 0px 0px 41px -24px;
+        float: left;
+        padding-left: 2vw;
+        padding-right: calc(10vw + 15px);
+        width: 100%;
+        margin-left: 55px;
+      }
+
+      .link-btn{
+        display:inline-block;
+        text-decoration:none;
+        margin:10px 0;
+        background-color:#e03997;
+        padding:10px;
+        color:#fff
+      }
+
+      .footer span {
+        display: block;
+      }
+
+      .footer span:nth-child(2) {
+        font-weight: 700;
+        font-size: 16px;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <p>Hello <strong>{{user.first_name}}</strong>,</p>
+      <p>
+        You have been registered successfully on Authors Heaven. Please click the link below to activate your
+        account. Note that this link is valid for 24 hours.
+      </p>
+      <a
+      class="link-btn"
+      href="{{url}}"
+      >Activate</a>
+      <p class="footer">
+        <span>Best Regards,</span>
+        <span>Team Authors Heaven</span>
+      </p>
+    </div>
+  </body>
+</html>
