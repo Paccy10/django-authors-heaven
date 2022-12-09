@@ -5,16 +5,19 @@ from django.urls import reverse
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from authors_heaven.settings.base import env
 
 from ..common.utils import send_email
 from .error_messages import errors
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, LoginSerializer
 
 
 class UserSignupView(mixins.CreateModelMixin, generics.GenericAPIView):
+    """User signup view"""
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -34,6 +37,8 @@ class UserSignupView(mixins.CreateModelMixin, generics.GenericAPIView):
 
 
 class UserVerificationView(generics.GenericAPIView):
+    """User verification view"""
+
     def get(self, request):
         token = request.GET.get("token")
         try:
@@ -55,3 +60,15 @@ class UserVerificationView(generics.GenericAPIView):
                 {"token": [errors["token"]["invalid"]]},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class UserLoginView(generics.GenericAPIView):
+    """User login view"""
+
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)

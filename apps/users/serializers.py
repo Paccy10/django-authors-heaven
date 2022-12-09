@@ -1,9 +1,13 @@
 from django.core.validators import RegexValidator
+from django.db.models import Q
 from rest_framework import serializers
 
 from ..common.utils import validate_unique_value
 from .error_messages import errors
 from .models import User
+from django.contrib import auth
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -94,3 +98,49 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+
+class LoginSerializer(serializers.ModelSerializer):
+    """User login serializer"""
+
+    email = serializers.EmailField(required=False)
+    username = serializers.CharField(required=False)
+    password = serializers.CharField(
+        write_only=True,
+        error_messages={
+            "required": errors["password"]["required"],
+        },
+    )
+
+    class Meta:
+        model = User
+        fields = ["email", "username", "password"]
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        username = attrs.get("username")
+        password = attrs.get("password")
+
+        if not email and not username:
+            raise serializers.ValidationError(
+                {"username": errors["account"]["required"]}
+            )
+
+        try:
+            user = User.objects.get(Q(username=username) | Q(email=email))
+        except User.DoesNotExist:
+            raise AuthenticationFailed(errors["account"]["no_account"])
+
+        if not user.check_password(password):
+            raise AuthenticationFailed(errors["account"]["no_account"])
+
+        if not user.is_active:
+            raise AuthenticationFailed(errors["account"]["disabled"])
+
+        token = RefreshToken.for_user(user)
+
+        return {
+            "access_token": str(token.access_token),
+            "refresh_token": str(token),
+            "user": UserSerializer(user).data,
+        }

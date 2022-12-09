@@ -16,6 +16,14 @@ def base_user(db, user_factory):
 
 
 @pytest.fixture
+def active_user(db, user_factory):
+    new_user = user_factory.create()
+    new_user.is_active = True
+    new_user.save()
+    return new_user
+
+
+@pytest.fixture
 def super_user(db, user_factory):
     new_user = user_factory.create(is_superuser=True)
     return new_user

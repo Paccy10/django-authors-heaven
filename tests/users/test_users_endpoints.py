@@ -190,3 +190,76 @@ class TestUserVerificationEndpoint:
 
         assert response.status_code == 400
         assert response.json()["token"] == [errors["token"]["expired"]]
+
+
+@pytest.mark.django_db
+class TestUserLoginEndpoint:
+    """Test user login endpoint"""
+
+    url = reverse("login")
+
+    def test_user_login_with_email_succeeds(self, api_client, active_user):
+        data = {"email": active_user.email, "password": "password"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 200
+        assert "access_token" in response.json()
+        assert "refresh_token" in response.json()
+
+    def test_user_login_with_username_succeeds(self, api_client, active_user):
+        data = {"username": active_user.username, "password": "password"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 200
+        assert "access_token" in response.json()
+        assert "refresh_token" in response.json()
+
+    def test_user_login_without_username_or_email_fails(self, api_client, base_user):
+        data = {"password": "password"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 400
+        assert response.json()["username"] == [errors["account"]["required"]]
+
+    def test_user_login_without_password_fails(self, api_client, base_user):
+        data = {"email": base_user.email}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 400
+        assert response.json()["password"] == [errors["password"]["required"]]
+
+    def test_user_login_with_wrong_email_fails(self, api_client, base_user):
+        data = {"email": "baser_user@example.com", "password": "password"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 401
+        assert response.json()["detail"] == errors["account"]["no_account"]
+
+    def test_user_login_with_wrong_username_fails(self, api_client, base_user):
+        data = {"username": "baser_user", "password": "password"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 401
+        assert response.json()["detail"] == errors["account"]["no_account"]
+
+    def test_user_login_with_wrong_password_fails(self, api_client, base_user):
+        data = {"email": base_user.email, "password": "base_user.password"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 401
+        assert response.json()["detail"] == errors["account"]["no_account"]
+
+    def test_user_login_with_inactivated_account_fails(self, api_client, base_user):
+        data = {"email": base_user.email, "password": "password"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 401
+        assert response.json()["detail"] == errors["account"]["disabled"]
