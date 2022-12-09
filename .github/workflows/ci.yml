@@ -45,7 +45,7 @@ jobs:
         run: make show-logs
 
       - name: Check logs6
-        run: make show-logs
+        run: docker compose logs api
       
       # - name: Check imports
       #   run: make isort-check
