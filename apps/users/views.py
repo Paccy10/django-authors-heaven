@@ -12,7 +12,7 @@ from authors_heaven.settings.base import env
 from ..common.utils import send_email
 from .error_messages import errors
 from .models import User
-from .serializers import UserSerializer, LoginSerializer
+from .serializers import LoginSerializer, UserSerializer
 
 
 class UserSignupView(mixins.CreateModelMixin, generics.GenericAPIView):

@@ -1,13 +1,13 @@
+from django.contrib import auth
 from django.core.validators import RegexValidator
 from django.db.models import Q
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from ..common.utils import validate_unique_value
 from .error_messages import errors
 from .models import User
-from django.contrib import auth
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserSerializer(serializers.ModelSerializer):
