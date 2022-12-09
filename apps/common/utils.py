@@ -12,6 +12,7 @@ class ConflictException(APIException):
 
 
 def validate_unique_value(**kwargs):
+
     field = kwargs["field"]
     value = kwargs["value"]
     errors = kwargs["errors"]
