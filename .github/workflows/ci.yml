@@ -31,6 +31,21 @@ jobs:
 
       - name: Check logs
         run: make show-logs
+
+      - name: Check logs2
+        run: make show-logs
+
+      - name: Check logs3
+        run: make show-logs
+
+      - name: Check logs4
+        run: make show-logs
+
+      - name: Check logs5
+        run: make show-logs
+
+      - name: Check logs6
+        run: make show-logs
       
       # - name: Check imports
       #   run: make isort-check
