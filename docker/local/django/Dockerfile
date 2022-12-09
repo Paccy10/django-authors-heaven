@@ -5,7 +5,7 @@ RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
-LABEL description="DEvelopment image for Authors Heaven Project"
+LABEL description="Development image for Authors Heaven Project"
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -15,8 +15,7 @@ RUN apt-get update \
     && apt-get install -y libpq-dev \ 
     && apt-get install -y gettext \ 
     && apt-get install -y netcat gcc postgresql \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && rm -rf /var/lib/apt/lists/* 
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 RUN pip3 install --upgrade pip
 COPY ./requirements.txt /app/requirements.txt
