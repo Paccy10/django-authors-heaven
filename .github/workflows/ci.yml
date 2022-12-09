@@ -47,6 +47,24 @@ jobs:
       - name: Check logs6
         run: docker compose logs api
       
+      - name: Check logs7
+        run: docker compose logs api
+
+      - name: Check logs8
+        run: docker compose logs api
+
+      - name: Check logs9
+        run: docker compose logs api
+
+      - name: Check logs10
+        run: docker compose logs api
+
+      - name: Check logs11
+        run: docker compose logs api
+
+      - name: Check logs12
+        run: docker compose logs api
+      
       # - name: Check imports
       #   run: make isort-check
 
