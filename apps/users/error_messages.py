@@ -33,4 +33,9 @@ errors = {
         "expired": "The token is expired",
         "invalid": "The token is invalid",
     },
+    "account": {
+        "required": "The username or email is required",
+        "disabled": "The account is not activated. Please check your email",
+        "no_account": "No account with the provided credentials",
+    },
 }
