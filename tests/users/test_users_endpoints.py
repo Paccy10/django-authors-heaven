@@ -263,3 +263,169 @@ class TestUserLoginEndpoint:
 
         assert response.status_code == 401
         assert response.json()["detail"] == errors["account"]["disabled"]
+
+
+@pytest.mark.django_db
+class TestForgotPasswordEndpoint:
+    """Test forgot password endpoint"""
+
+    url = reverse("forgot-password")
+
+    def test_forgot_password_succeeds(self, api_client, active_user):
+        django_rq.enqueue = MagicMock(return_value=None)
+        data = {"email": active_user.email}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 200
+        assert (
+            response.json()["detail"]
+            == "Password reset link successfully sent. Please check your email to continue"
+        )
+
+    def test_forgot_password_without_email_fails(self, api_client):
+        data = {}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 400
+        assert response.json()["email"] == [errors["email"]["required"]]
+
+    def test_forgot_password_with_blank_email_fails(self, api_client):
+        data = {"email": ""}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 400
+        assert response.json()["email"] == [errors["email"]["blank"]]
+
+    def test_forgot_password_with_invalid_email_fails(self, api_client):
+        data = {"email": "email"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 400
+        assert response.json()["email"] == [errors["email"]["invalid"]]
+
+    def test_forgot_password_with_unexisted_email_fails(self, api_client):
+        data = {"email": "email@app.com"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 404
+        assert response.json()["detail"] == "User with email 'email@app.com' not found"
+
+
+@pytest.mark.django_db
+class TestResetPasswordEndpoint:
+    """Test reset password endpoint"""
+
+    url = reverse("reset-password")
+    data = {"password": "Password@12345", "confirm_password": "Password@12345"}
+
+    def test_reset_password_succeeds(self, api_client, active_user):
+        token = RefreshToken.for_user(active_user).access_token
+        data = self.data.copy()
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token={str(token)}", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 200
+        assert response.json()["email"] == active_user.email
+
+    def test_reset_password_without_password_fails(self, api_client):
+        data = self.data.copy()
+        data.pop("password")
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token=token", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["password"] == [errors["password"]["required"]]
+
+    def test_reset_password_with_blank_password_fails(self, api_client):
+        data = self.data.copy()
+        data["password"] = ""
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token=token", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["password"] == [errors["password"]["blank"]]
+
+    def test_reset_password_with_weak_password_fails(self, api_client):
+        data = self.data.copy()
+        data["password"] = "hello"
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token=token", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["password"] == [
+            errors["password"]["weak"],
+            errors["password"]["min_length"],
+        ]
+
+    def test_reset_password_without_confirm_password_fails(self, api_client):
+        data = self.data.copy()
+        data.pop("confirm_password")
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token=token", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["confirm_password"] == [
+            errors["confirm_password"]["required"]
+        ]
+
+    def test_reset_password_with_blank_confirm_password_fails(self, api_client):
+        data = self.data.copy()
+        data["confirm_password"] = ""
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token=token", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["confirm_password"] == [
+            errors["confirm_password"]["blank"]
+        ]
+
+    def test_reset_password_with_unmatched_passwords_fails(self, api_client):
+        data = self.data.copy()
+        data["confirm_password"] = "Password@1234"
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token=token", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["passwords"] == [errors["confirm_password"]["invalid"]]
+
+    def test_reset_password_with_invalid_token_fails(self, api_client, base_user):
+        data = self.data.copy()
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token=token", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["token"] == [errors["token"]["invalid"]]
+
+    def test_reset_password_with_expired_token_fails(self, api_client, base_user):
+        token = RefreshToken.for_user(base_user).access_token
+        token.set_exp(lifetime=datetime.timedelta(seconds=1))
+        sleep(2)
+        data = self.data.copy()
+        data = json.dumps(data)
+        response = api_client.post(
+            f"{self.url}?token={str(token)}", data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 400
+        assert response.json()["token"] == [errors["token"]["expired"]]
