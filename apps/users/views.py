@@ -12,8 +12,12 @@ from authors_heaven.settings.base import env
 from ..common.utils import send_email
 from .error_messages import errors
 from .models import User
-from .serializers import (ForgotPasswordSerializer, LoginSerializer,
-                          ResetPasswordSerializer, UserSerializer)
+from .serializers import (
+    ForgotPasswordSerializer,
+    LoginSerializer,
+    ResetPasswordSerializer,
+    UserSerializer,
+)
 
 
 class UserSignupView(mixins.CreateModelMixin, generics.GenericAPIView):
