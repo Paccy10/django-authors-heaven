@@ -9,6 +9,24 @@ from ..common.utils import validate_unique_value
 from .error_messages import errors
 from .models import User
 
+password = serializers.CharField(
+    required=True,
+    min_length=8,
+    max_length=100,
+    write_only=True,
+    validators=[
+        RegexValidator(
+            regex="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).+$",
+            message=errors["password"]["weak"],
+        )
+    ],
+    error_messages={
+        "required": errors["password"]["required"],
+        "blank": errors["password"]["blank"],
+        "min_length": errors["password"]["min_length"],
+    },
+)
+
 
 class UserSerializer(serializers.ModelSerializer):
     """User serializer"""
@@ -42,23 +60,7 @@ class UserSerializer(serializers.ModelSerializer):
             "blank": errors["username"]["blank"],
         },
     )
-    password = serializers.CharField(
-        required=True,
-        min_length=8,
-        max_length=100,
-        write_only=True,
-        validators=[
-            RegexValidator(
-                regex="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).+$",
-                message=errors["password"]["weak"],
-            )
-        ],
-        error_messages={
-            "required": errors["password"]["required"],
-            "blank": errors["password"]["blank"],
-            "min_length": errors["password"]["min_length"],
-        },
-    )
+    password = password
 
     class Meta:
         model = User
@@ -161,23 +163,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
 class ResetPasswordSerializer(serializers.Serializer):
     """Reset user password serializer"""
 
-    password = serializers.CharField(
-        required=True,
-        min_length=8,
-        max_length=100,
-        write_only=True,
-        validators=[
-            RegexValidator(
-                regex="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).+$",
-                message=errors["password"]["weak"],
-            )
-        ],
-        error_messages={
-            "required": errors["password"]["required"],
-            "blank": errors["password"]["blank"],
-            "min_length": errors["password"]["min_length"],
-        },
-    )
+    password = password
     confirm_password = serializers.CharField(
         required=True,
         error_messages={
