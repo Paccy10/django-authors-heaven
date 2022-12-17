@@ -181,13 +181,14 @@ class LoginSerializer(serializers.ModelSerializer):
                 errors["account"]["provider"].format(user.auth_provider)
             )
 
-        if not user.check_password(password):
+        elif not user.check_password(password):
             raise AuthenticationFailed(errors["account"]["no_account"])
 
-        if not user.is_active:
+        elif not user.is_active:
             raise AuthenticationFailed(errors["account"]["disabled"])
 
-        return generate_tokens(user)
+        else:
+            return generate_tokens(user)
 
 
 class ForgotPasswordSerializer(serializers.Serializer):
