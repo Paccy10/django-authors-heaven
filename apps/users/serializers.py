@@ -161,16 +161,7 @@ class LoginSerializer(serializers.ModelSerializer):
         model = User
         fields = ["email", "username", "password"]
 
-    def validate(self, attrs):
-        email = attrs.get("email")
-        username = attrs.get("username")
-        password = attrs.get("password")
-
-        if not email and not username:
-            raise serializers.ValidationError(
-                {"username": errors["account"]["required"]}
-            )
-
+    def authenticate_user(self, email, username, password):
         try:
             user = User.objects.get(Q(username=username) | Q(email=email))
         except User.DoesNotExist:
@@ -181,14 +172,27 @@ class LoginSerializer(serializers.ModelSerializer):
                 errors["account"]["provider"].format(user.auth_provider)
             )
 
-        elif not user.check_password(password):
+        if not user.check_password(password):
             raise AuthenticationFailed(errors["account"]["no_account"])
 
-        elif not user.is_active:
+        if not user.is_active:
             raise AuthenticationFailed(errors["account"]["disabled"])
 
-        else:
-            return generate_tokens(user)
+        return user
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        username = attrs.get("username")
+        password = attrs.get("password")
+
+        if not email and not username:
+            raise serializers.ValidationError(
+                {"username": errors["account"]["required"]}
+            )
+
+        user = self.authenticate_user(email, username, password)
+
+        return generate_tokens(user)
 
 
 class ForgotPasswordSerializer(serializers.Serializer):
