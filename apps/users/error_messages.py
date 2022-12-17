@@ -37,5 +37,9 @@ errors = {
         "required": "The username or email is required",
         "disabled": "The account is not activated. Please check your email",
         "no_account": "No account with the provided credentials",
+        "provider": "Please continue your login with {0}",
+    },
+    "auth_token": {
+        "required": "The auth_token is required",
     },
 }

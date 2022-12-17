@@ -1,7 +1,7 @@
 import datetime
 import json
 from time import sleep
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import django_rq
 import pytest
@@ -9,6 +9,7 @@ from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.error_messages import errors
+from apps.users.models import AUTH_PROVIDERS
 from tests.constants import JSON_CONTENT_TYPE
 
 
@@ -264,6 +265,18 @@ class TestUserLoginEndpoint:
         assert response.status_code == 401
         assert response.json()["detail"] == errors["account"]["disabled"]
 
+    def test_user_login_with_different_provider_fails(self, api_client, base_user):
+        base_user.auth_provider = AUTH_PROVIDERS.get("google")
+        base_user.save()
+        data = {"email": base_user.email, "password": "password"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 401
+        assert response.json()["detail"] == errors["account"]["provider"].format(
+            base_user.auth_provider
+        )
+
 
 @pytest.mark.django_db
 class TestForgotPasswordEndpoint:
@@ -429,3 +442,76 @@ class TestResetPasswordEndpoint:
 
         assert response.status_code == 400
         assert response.json()["token"] == [errors["token"]["expired"]]
+
+
+@pytest.mark.django_db
+class TestGoogleAuthEndpoint:
+    """Test google auth endpoint"""
+
+    url = reverse("google-auth")
+
+    @patch("google.oauth2.id_token.verify_token", autospec=True)
+    def test_google_auth_succeeds(self, verify_token, api_client):
+        verify_token.return_value = {
+            "iss": "accounts.google.com",
+            "email": "test.user@app.com",
+            "name": "test user",
+            "given_name": "test",
+            "family_name": "user",
+        }
+
+        data = {"auth_token": "auth_token"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 200
+        assert "access_token" in response.json()
+
+    @patch("google.oauth2.id_token.verify_token", autospec=True)
+    def test_google_auth_with_existing_username_succeeds(
+        self, verify_token, api_client, active_user
+    ):
+        active_user.username = active_user.username.lower()
+        active_user.save()
+
+        verify_token.return_value = {
+            "iss": "accounts.google.com",
+            "email": "test.user@app.com",
+            "name": f"{active_user.username}",
+            "given_name": "test",
+            "family_name": "user",
+        }
+
+        data = {"auth_token": "auth_token"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 200
+        assert "access_token" in response.json()
+
+    @patch("google.oauth2.id_token.verify_token", autospec=True)
+    def test_google_auth_with_existing_user_succeeds(
+        self, verify_token, api_client, active_user
+    ):
+        verify_token.return_value = {
+            "iss": "accounts.google.com",
+            "email": active_user.email,
+            "name": "test user",
+            "given_name": "test",
+            "family_name": "user",
+        }
+
+        data = {"auth_token": "auth_token"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 200
+        assert "access_token" in response.json()
+
+    def test_google_auth_with_invalid_id_token_fails(self, api_client):
+        data = {"auth_token": "auth_token"}
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 400
+        assert response.json()["auth_token"] == [errors["token"]["invalid"]]

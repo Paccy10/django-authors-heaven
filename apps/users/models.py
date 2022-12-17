@@ -4,6 +4,13 @@ from django.db import models
 from ..common.models import BaseModel
 from .managers import UserManager
 
+AUTH_PROVIDERS = {
+    "facebook": "facebook",
+    "google": "google",
+    "twitter": "twitter",
+    "email": "email",
+}
+
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     username = models.CharField(max_length=255, unique=True)
@@ -11,6 +18,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     last_name = models.CharField(max_length=255)
     middle_name = models.CharField(max_length=255, null=True)
     email = models.EmailField(unique=True)
+    auth_provider = models.CharField(
+        max_length=100, blank=False, null=False, default=AUTH_PROVIDERS.get("email")
+    )
 
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
