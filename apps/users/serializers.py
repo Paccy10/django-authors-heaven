@@ -187,13 +187,7 @@ class LoginSerializer(serializers.ModelSerializer):
         if not user.is_active:
             raise AuthenticationFailed(errors["account"]["disabled"])
 
-        token = RefreshToken.for_user(user)
-
-        return {
-            "access_token": str(token.access_token),
-            "refresh_token": str(token),
-            "user": UserSerializer(user).data,
-        }
+        return generate_tokens(user)
 
 
 class ForgotPasswordSerializer(serializers.Serializer):
