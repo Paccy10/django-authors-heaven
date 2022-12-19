@@ -32,6 +32,9 @@ jobs:
           echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
           echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
           echo DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }} >> .env
+          echo SOCIAL_SECRET=${{ secrets.SOCIAL_SECRET }} >> .env
+          echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+          echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
       
       - name: Build image
         run: make build

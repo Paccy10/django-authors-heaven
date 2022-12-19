@@ -14,6 +14,7 @@ from .error_messages import errors
 from .models import User
 from .serializers import (
     ForgotPasswordSerializer,
+    GoogleAuthSerializer,
     LoginSerializer,
     ResetPasswordSerializer,
     UserSerializer,
@@ -139,3 +140,17 @@ class ResetPasswordView(generics.GenericAPIView):
                 {"token": [errors["token"]["invalid"]]},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class GoogleAuthView(generics.GenericAPIView):
+    """Google authentication view"""
+
+    serializer_class = GoogleAuthSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data["auth_token"]
+
+        return Response(data, status=status.HTTP_200_OK)
