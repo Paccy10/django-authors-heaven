@@ -45,4 +45,7 @@ errors = {
         "null": "The auth_token can't be null",
     },
     "social_app_id": {"invalid": "The Client ID provided is not recognisable"},
+    "access_tokens": {
+        "invalid": "The access_token_key and access_token_secret are invalid"
+    },
 }
