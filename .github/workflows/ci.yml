@@ -35,6 +35,10 @@ jobs:
           echo SOCIAL_SECRET=${{ secrets.SOCIAL_SECRET }} >> .env
           echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
           echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
+          echo TWITTER_API_KEY=${{ secrets.TWITTER_API_KEY }} >> .env
+          echo TWITTER_API_SECRET=${{ secrets.TWITTER_API_SECRET }} >> .env
+          echo TWITTER_ACCESS_TOKEN_KEY=${{ secrets.TWITTER_ACCESS_TOKEN_KEY }} >> .env
+          echo TWITTER_ACCESS_TOKEN_SECRET=${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }} >> .env
       
       - name: Build image
         run: make build

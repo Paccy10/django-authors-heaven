@@ -570,3 +570,32 @@ class TestFacebbokAuthEndpoint:
 
         assert response.status_code == 400
         assert response.json()["auth_token"] == [errors["token"]["invalid"]]
+
+
+@pytest.mark.django_db
+class TestTwitterAuthEndpoint:
+    """Test twitter auth endpoint"""
+
+    url = reverse("twitter-auth")
+
+    def test_twitter_auth_succeeds(self, api_client):
+        data = {
+            "access_token_key": env("TWITTER_ACCESS_TOKEN_KEY"),
+            "access_token_secret": env("TWITTER_ACCESS_TOKEN_SECRET"),
+        }
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 200
+        assert "access_token" in response.json()
+
+    def test_twitter_auth_with_invalid_access_tokens_fails(self, api_client):
+        data = {
+            "access_token_key": "access_token_key",
+            "access_token_secret": "access_token_secret",
+        }
+        data = json.dumps(data)
+        response = api_client.post(self.url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 400
+        assert response.json()["access_tokens"] == [errors["access_tokens"]["invalid"]]

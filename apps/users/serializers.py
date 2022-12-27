@@ -10,6 +10,7 @@ from ..common.utils import validate_unique_value
 from .error_messages import errors
 from .helpers.facebook import Facebook
 from .helpers.google import Google
+from .helpers.twitter import Twitter
 from .helpers.utils import generate_username
 from .models import AUTH_PROVIDERS, User
 
@@ -290,6 +291,35 @@ class FacebookAuthSerializer(serializers.Serializer):
             "last_name": profile.get("last_name"),
             "name": profile.get("name"),
             "provider": AUTH_PROVIDERS.get("facebook"),
+        }
+
+        return social_authenticate(**data)
+
+
+class TwitterAuthSerializer(serializers.Serializer):
+    access_token_key = serializers.CharField()
+    access_token_secret = serializers.CharField()
+
+    def validate(self, attrs):
+        access_token_key = attrs.get("access_token_key")
+        access_token_secret = attrs.get("access_token_secret")
+
+        try:
+            profile = Twitter.validate(access_token_key, access_token_secret)
+        except ValueError as e:
+            raise serializers.ValidationError({"access_tokens": e})
+
+        name = profile.get("name")
+        names = name.split(" ")
+        first_name = names[0]
+        last_name = names[1] if len(names) > 1 else names[0]
+
+        data = {
+            "email": profile.get("email"),
+            "first_name": first_name,
+            "last_name": last_name,
+            "name": name,
+            "provider": AUTH_PROVIDERS.get("twitter"),
         }
 
         return social_authenticate(**data)
