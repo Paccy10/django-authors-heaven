@@ -41,5 +41,8 @@ errors = {
     },
     "auth_token": {
         "required": "The auth_token is required",
+        "blank": "The auth_token can't be blank",
+        "null": "The auth_token can't be null",
     },
+    "social_app_id": {"invalid": "The Client ID provided is not recognisable"},
 }
