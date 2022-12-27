@@ -8,6 +8,7 @@ from authors_heaven.settings.base import env
 
 from ..common.utils import validate_unique_value
 from .error_messages import errors
+from .helpers.facebook import Facebook
 from .helpers.google import Google
 from .helpers.utils import generate_username
 from .models import AUTH_PROVIDERS, User
@@ -51,6 +52,10 @@ def social_authenticate(**data):
     user = User.objects.filter(email=email).first()
 
     if user:
+        if user.auth_provider != provider:
+            user.auth_provider = provider
+            user.save()
+
         return generate_tokens(user)
 
     else:
@@ -237,6 +242,8 @@ class GoogleAuthSerializer(serializers.Serializer):
     auth_token = serializers.CharField(
         error_messages={
             "required": errors["auth_token"]["required"],
+            "blank": errors["auth_token"]["blank"],
+            "null": errors["auth_token"]["null"],
         },
     )
 
@@ -246,12 +253,43 @@ class GoogleAuthSerializer(serializers.Serializer):
         except ValueError as e:
             raise serializers.ValidationError(e)
 
+        if user_data["aud"] != env("GOOGLE_CLIENT_ID"):
+            raise AuthenticationFailed(errors["social_app_id"]["invalid"])
+
         data = {
             "email": user_data.get("email"),
             "first_name": user_data.get("given_name"),
             "last_name": user_data.get("family_name"),
             "name": user_data.get("name"),
             "provider": AUTH_PROVIDERS.get("google"),
+        }
+
+        return social_authenticate(**data)
+
+
+class FacebookAuthSerializer(serializers.Serializer):
+    """Facebook authentication serializer"""
+
+    auth_token = serializers.CharField(
+        error_messages={
+            "required": errors["auth_token"]["required"],
+            "blank": errors["auth_token"]["blank"],
+            "null": errors["auth_token"]["null"],
+        },
+    )
+
+    def validate_auth_token(self, auth_token):
+        try:
+            profile = Facebook.validate(auth_token)
+        except ValueError as e:
+            raise serializers.ValidationError(e)
+
+        data = {
+            "email": profile.get("email"),
+            "first_name": profile.get("first_name"),
+            "last_name": profile.get("last_name"),
+            "name": profile.get("name"),
+            "provider": AUTH_PROVIDERS.get("facebook"),
         }
 
         return social_authenticate(**data)

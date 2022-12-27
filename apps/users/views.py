@@ -13,6 +13,7 @@ from ..common.utils import send_email
 from .error_messages import errors
 from .models import User
 from .serializers import (
+    FacebookAuthSerializer,
     ForgotPasswordSerializer,
     GoogleAuthSerializer,
     LoginSerializer,
@@ -146,6 +147,20 @@ class GoogleAuthView(generics.GenericAPIView):
     """Google authentication view"""
 
     serializer_class = GoogleAuthSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data["auth_token"]
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class FacebookAuthView(generics.GenericAPIView):
+    """Facebook authentication view"""
+
+    serializer_class = FacebookAuthSerializer
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
