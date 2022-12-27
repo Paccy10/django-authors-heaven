@@ -8,8 +8,8 @@ from authors_heaven.settings.base import env
 
 from ..common.utils import validate_unique_value
 from .error_messages import errors
-from .helpers.google import Google
 from .helpers.facebook import Facebook
+from .helpers.google import Google
 from .helpers.utils import generate_username
 from .models import AUTH_PROVIDERS, User
 

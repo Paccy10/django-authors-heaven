@@ -1,13 +1,13 @@
 from django.urls import path
 
 from .views import (
+    FacebookAuthView,
     ForgotPasswordView,
     GoogleAuthView,
     ResetPasswordView,
     UserLoginView,
     UserSignupView,
     UserVerificationView,
-    FacebookAuthView,
 )
 
 urlpatterns = [

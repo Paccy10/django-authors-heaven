@@ -10,8 +10,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.error_messages import errors
 from apps.users.models import AUTH_PROVIDERS
-from tests.constants import JSON_CONTENT_TYPE
 from authors_heaven.settings.base import env
+from tests.constants import JSON_CONTENT_TYPE
 
 
 @pytest.mark.django_db

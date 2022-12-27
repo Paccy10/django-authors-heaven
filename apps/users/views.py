@@ -13,12 +13,12 @@ from ..common.utils import send_email
 from .error_messages import errors
 from .models import User
 from .serializers import (
+    FacebookAuthSerializer,
     ForgotPasswordSerializer,
     GoogleAuthSerializer,
     LoginSerializer,
     ResetPasswordSerializer,
     UserSerializer,
-    FacebookAuthSerializer,
 )
 
 

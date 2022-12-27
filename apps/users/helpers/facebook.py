@@ -1,8 +1,9 @@
-from facebook import GraphAPI, GraphAPIError
+import pdb
+
 import requests
+from facebook import GraphAPI, GraphAPIError
 
 from ..error_messages import errors
-import pdb
 
 
 class Facebook:
