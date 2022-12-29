@@ -12,7 +12,7 @@ from authors_heaven.settings.base import env
 
 from ..common.utils import send_email
 from ..profiles.models import Profile
-from ..profiles.serializers import ProfileDisplaySerializer
+from ..profiles.serializers import EditProfileSerializer, ProfileDisplaySerializer
 from .error_messages import errors
 from .models import User
 from .serializers import (
@@ -196,6 +196,31 @@ class MyProfileView(generics.GenericAPIView):
 
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
-        data = ProfileDisplaySerializer(profile).data
+        data = ProfileDisplaySerializer(profile, context={"request": request}).data
 
         return Response(data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        serializer = EditProfileSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+        user_data = {k: data.get(k) for k in ["first_name", "last_name", "middle_name"]}
+        profile_data = {
+            k: data.get(k)
+            for k in ["phone_number", "about_me", "avatar", "gender", "country", "city"]
+        }
+        profile = Profile.objects.get(user=request.user)
+
+        for attr, value in user_data.items():
+            setattr(profile.user, attr, value)
+        profile.user.save()
+
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
+        profile.save()
+
+        return Response(
+            ProfileDisplaySerializer(profile, context={"request": request}).data,
+            status=status.HTTP_200_OK,
+        )
