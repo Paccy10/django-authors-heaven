@@ -1,17 +1,20 @@
+from django_countries.serializer_fields import CountryField
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 
-from .models import Profile
+from ..users.models import User
+from .models import Gender, Profile
 
 
 class ProfileDisplaySerializer(serializers.ModelSerializer):
     """User profile display serializer"""
 
-    first_name = serializers.SerializerMethodField(method_name="get_first_name")
-    last_name = serializers.SerializerMethodField(method_name="get_last_name")
-    middle_name = serializers.SerializerMethodField(method_name="get_middle_name")
-    email = serializers.SerializerMethodField(method_name="get_email")
-    username = serializers.SerializerMethodField(method_name="get_username")
-    country = serializers.SerializerMethodField(method_name="get_country")
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
+    middle_name = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+    country = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -28,6 +31,7 @@ class ProfileDisplaySerializer(serializers.ModelSerializer):
             "country",
             "city",
             "created_at",
+            "updated_at",
         ]
 
     def get_first_name(self, profile):
@@ -47,3 +51,31 @@ class ProfileDisplaySerializer(serializers.ModelSerializer):
 
     def get_country(self, profile):
         return profile.country.name
+
+
+class EditProfileSerializer(serializers.Serializer):
+    """Edit user profile serializer"""
+
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    middle_name = serializers.CharField(required=False)
+    phone_number = PhoneNumberField()
+    about_me = serializers.CharField()
+    avatar = serializers.ImageField(required=False)
+    gender = serializers.ChoiceField(choices=Gender.choices)
+    country = CountryField(name_only=True)
+    city = serializers.CharField()
+
+    class Meta:
+        model = Profile
+        fields = [
+            "first_name",
+            "last_name",
+            "middle_name",
+            "phone_number",
+            "about_me",
+            "avatar",
+            "gender",
+            "country",
+            "city",
+        ]
