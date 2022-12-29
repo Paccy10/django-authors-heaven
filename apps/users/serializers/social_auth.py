@@ -105,6 +105,8 @@ class FacebookAuthSerializer(serializers.Serializer):
 
 
 class TwitterAuthSerializer(serializers.Serializer):
+    """Twitter authentication serializer"""
+
     access_token_key = serializers.CharField()
     access_token_secret = serializers.CharField()
 
