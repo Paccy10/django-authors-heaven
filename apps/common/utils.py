@@ -1,6 +1,9 @@
+from functools import wraps
+
 from django.core.mail import EmailMessage
 from rest_framework import status
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, PermissionDenied
+from rest_framework.request import Request
 
 
 class ConflictException(APIException):
@@ -35,3 +38,27 @@ def send_email(subject, message, to):
     email_message = EmailMessage(subject, message, to=to)
     email_message.content_subtype = "html"
     email_message.send()
+
+
+def find_request(args):
+    for item in args:
+        if isinstance(item, Request):
+            return item
+
+
+def should_be_admin():
+    """Decorator to check if the user is an admin"""
+
+    def check(view):
+        @wraps(view)
+        def wrapped_view(*args, **kwargs):
+            request = find_request(args)
+
+            if not request.user.is_admin:
+                raise PermissionDenied()
+
+            return view(*args, **kwargs)
+
+        return wrapped_view
+
+    return check

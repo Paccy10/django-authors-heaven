@@ -9,6 +9,7 @@ from .views import (
     TwitterAuthView,
     UserLoginView,
     UserSignupView,
+    UsersView,
     UserVerificationView,
 )
 
@@ -22,4 +23,5 @@ urlpatterns = [
     path("auth/facebook/", FacebookAuthView.as_view(), name="facebook-auth"),
     path("auth/twitter/", TwitterAuthView.as_view(), name="twitter-auth"),
     path("profile/me/", MyProfileView.as_view(), name="my-profile"),
+    path("", UsersView.as_view(), name=("get-users")),
 ]
