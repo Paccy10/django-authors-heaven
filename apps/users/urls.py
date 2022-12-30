@@ -11,6 +11,7 @@ from .views import (
     UserSignupView,
     UsersView,
     UserVerificationView,
+    UserView,
 )
 
 urlpatterns = [
@@ -24,4 +25,5 @@ urlpatterns = [
     path("auth/twitter/", TwitterAuthView.as_view(), name="twitter-auth"),
     path("profile/me/", MyProfileView.as_view(), name="my-profile"),
     path("", UsersView.as_view(), name=("get-users")),
+    path("<slug:id>/", UserView.as_view(), name=("get-user")),
 ]

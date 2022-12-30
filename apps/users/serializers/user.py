@@ -122,7 +122,6 @@ class UserDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "pkid",
             "first_name",
             "last_name",
             "username",
