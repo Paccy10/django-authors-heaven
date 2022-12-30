@@ -1,10 +1,10 @@
 import factory
 from django.db.models.signals import post_save
-from faker import Factory as FakerFatcory
+from faker import Factory as FakerFactory
 
 from apps.profiles.models import Profile
 
-faker = FakerFatcory.create()
+faker = FakerFactory.create()
 
 
 @factory.django.mute_signals(post_save)

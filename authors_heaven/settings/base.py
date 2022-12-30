@@ -45,9 +45,10 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "django_rq",
     "rest_framework_simplejwt",
+    "taggit",
 ]
 
-LOCAL_APPS = ["apps.common", "apps.users", "apps.profiles"]
+LOCAL_APPS = ["apps.common", "apps.users", "apps.profiles", "apps.articles"]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 

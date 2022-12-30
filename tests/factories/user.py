@@ -1,9 +1,9 @@
 import factory
-from faker import Factory as FakerFatcory
+from faker import Factory as FakerFactory
 
 from apps.users.models import User
 
-faker = FakerFatcory.create()
+faker = FakerFactory.create()
 
 
 class UserFactory(factory.django.DjangoModelFactory):

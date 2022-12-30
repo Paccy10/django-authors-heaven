@@ -23,6 +23,8 @@ class Gender(models.TextChoices):
 
 
 class Profile(BaseModel):
+    """Profile model"""
+
     user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
     phone_number = PhoneNumberField(max_length=30, null=True)
     about_me = models.TextField(null=True)
