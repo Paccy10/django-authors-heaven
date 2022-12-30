@@ -1,11 +1,9 @@
-from .social_auth import (
+from .auth import (
     FacebookAuthSerializer,
-    GoogleAuthSerializer,
-    TwitterAuthSerializer,
-)
-from .user import (
     ForgotPasswordSerializer,
+    GoogleAuthSerializer,
     LoginSerializer,
     ResetPasswordSerializer,
-    UserSerializer,
+    TwitterAuthSerializer,
 )
+from .user import UserDisplaySerializer, UserSerializer

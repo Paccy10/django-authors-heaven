@@ -202,7 +202,12 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ]
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
 }
 
 SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=1)}

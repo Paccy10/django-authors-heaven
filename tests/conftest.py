@@ -53,3 +53,17 @@ def auth_api_client(db, active_user_factory):
     client.credentials(HTTP_AUTHORIZATION=f"Bearer {str(token.access_token)}")
 
     return client
+
+
+@pytest.fixture
+def admin_api_client(db, active_user_factory):
+    new_user = active_user_factory.create()
+    new_user.is_active = True
+    new_user.is_admin = True
+    new_user.save()
+
+    token = RefreshToken.for_user(new_user)
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {str(token.access_token)}")
+
+    return client

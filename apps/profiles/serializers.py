@@ -2,7 +2,6 @@ from django_countries.serializer_fields import CountryField
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 
-from ..users.models import User
 from .models import Gender, Profile
 
 
@@ -31,7 +30,6 @@ class ProfileDisplaySerializer(serializers.ModelSerializer):
             "country",
             "city",
             "created_at",
-            "updated_at",
         ]
 
     def get_first_name(self, profile):

@@ -1,9 +1,8 @@
 from django.core.validators import RegexValidator
-from django.db.models import Q
 from rest_framework import serializers
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from ...common.serializers import BaseSerializer
 from ...common.utils import validate_unique_value
 from ..error_messages import errors
 from ..models import User
@@ -74,7 +73,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "id",
             "first_name",
             "last_name",
             "username",
@@ -82,8 +80,7 @@ class UserSerializer(serializers.ModelSerializer):
             "auth_provider",
             "password",
             "is_active",
-            "created_at",
-        ]
+        ] + BaseSerializer.Meta.fields
 
     def validate_email(self, email):
         norm_email = email.lower()
@@ -112,87 +109,52 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 
-class LoginSerializer(serializers.ModelSerializer):
-    """User login serializer"""
+class UserDisplaySerializer(serializers.ModelSerializer):
+    """User display serializer"""
 
-    email = serializers.EmailField(required=False)
-    username = serializers.CharField(required=False)
-    password = serializers.CharField(
-        write_only=True,
-        error_messages={
-            "required": errors["password"]["required"],
-        },
-    )
+    phone_number = serializers.SerializerMethodField()
+    about_me = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
+    gender = serializers.SerializerMethodField()
+    country = serializers.SerializerMethodField()
+    city = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["email", "username", "password"]
+        fields = [
+            "pkid",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "auth_provider",
+            "is_active",
+            "is_admin",
+            "phone_number",
+            "about_me",
+            "avatar",
+            "gender",
+            "country",
+            "city",
+        ] + BaseSerializer.Meta.fields
 
-    def authenticate_user(self, email, username, password):
-        try:
-            user = User.objects.get(Q(username=username) | Q(email=email))
-        except User.DoesNotExist:
-            raise AuthenticationFailed(errors["account"]["no_account"])
+    def get_phone_number(self, user):
+        return str(user.profile.phone_number) if user.profile.phone_number else None
 
-        if user.auth_provider != "email":
-            raise AuthenticationFailed(
-                errors["account"]["provider"].format(user.auth_provider)
-            )
+    def get_about_me(self, user):
+        return user.profile.about_me
 
-        if not user.check_password(password):
-            raise AuthenticationFailed(errors["account"]["no_account"])
+    def get_avatar(self, user):
+        request = self.context.get("request")
+        avatar = user.profile.avatar
+        return request.build_absolute_uri(avatar.url) if avatar else None
 
-        if not user.is_active:
-            raise AuthenticationFailed(errors["account"]["disabled"])
+    def get_gender(self, user):
+        return user.profile.gender
 
-        return user
+    def get_country(self, user):
+        country = user.profile.country
+        return country.name if country else None
 
-    def validate(self, attrs):
-        email = attrs.get("email")
-        username = attrs.get("username")
-        password = attrs.get("password")
-
-        if not email and not username:
-            raise serializers.ValidationError(
-                {"username": errors["account"]["required"]}
-            )
-
-        user = self.authenticate_user(email, username, password)
-
-        return generate_tokens(user)
-
-
-class ForgotPasswordSerializer(serializers.Serializer):
-    """Forgot password serializer"""
-
-    email = serializers.EmailField(
-        error_messages={
-            "required": errors["email"]["required"],
-            "blank": errors["email"]["blank"],
-            "invalid": errors["email"]["invalid"],
-        },
-    )
-
-
-class ResetPasswordSerializer(serializers.Serializer):
-    """Reset user password serializer"""
-
-    password = password
-    confirm_password = serializers.CharField(
-        required=True,
-        error_messages={
-            "required": errors["confirm_password"]["required"],
-            "blank": errors["confirm_password"]["blank"],
-        },
-    )
-
-    def validate(self, attrs):
-        password = attrs["password"]
-        confirm_password = attrs["confirm_password"]
-
-        if password != confirm_password:
-            raise serializers.ValidationError(
-                {"passwords": errors["confirm_password"]["invalid"]}
-            )
-
-        return attrs
+    def get_city(self, user):
+        return user.profile.city
