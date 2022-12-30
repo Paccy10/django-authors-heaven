@@ -62,3 +62,7 @@ def should_be_admin():
         return wrapped_view
 
     return check
+
+
+def get_country_name(country):
+    return country.name if country else None

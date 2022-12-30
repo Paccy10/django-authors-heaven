@@ -3,7 +3,10 @@ import json
 import pytest
 from django.urls import reverse
 
+from apps.users.models import User
 from tests.constants import JSON_CONTENT_TYPE
+
+from ..utils import get_dynamic_url
 
 
 @pytest.mark.django_db
@@ -215,3 +218,32 @@ class TestEditMyProfileEndpoint:
         assert response.json()["country"] == [
             f'"{invalid_country}" is not a valid choice.'
         ]
+
+
+@pytest.mark.django_db
+class TestGetUserProfileEndpoint:
+    """Test get another user profile endpoint"""
+
+    def test_get_user_profile_with_unauthorized_user_fails(self, auth_api_client):
+        url = get_dynamic_url(User, "user-profile")
+        auth_api_client.credentials()
+
+        response = auth_api_client.get(url)
+
+        assert response.status_code == 401
+        assert (
+            response.json()["detail"] == "Authentication credentials were not provided."
+        )
+
+    def test_get_user_profile_succeeds(self, auth_api_client):
+        url = get_dynamic_url(User, "user-profile")
+        response = auth_api_client.get(url)
+
+        assert response.status_code == 200
+
+    def test_get_user_profile_with_unexisted_id_fails(self, admin_api_client):
+        url = reverse("user-profile", args=["sdfdd"])
+        response = admin_api_client.get(url)
+
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Not found."
