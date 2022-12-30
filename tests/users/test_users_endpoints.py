@@ -1,7 +1,9 @@
 import pytest
 from django.urls import reverse
-from ..utils import get_dynamic_url
+
 from apps.users.models import User
+
+from ..utils import get_dynamic_url
 
 
 @pytest.mark.django_db
