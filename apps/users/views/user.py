@@ -67,3 +67,16 @@ class UsersView(mixins.ListModelMixin, generics.GenericAPIView):
     @should_be_admin()
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+
+class UserView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    """Get single user view"""
+
+    queryset = User.objects.all()
+    serializer_class = UserDisplaySerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "id"
+
+    @should_be_admin()
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
