@@ -8,4 +8,4 @@ from .auth import (
     UserSignupView,
     UserVerificationView,
 )
-from .user import MyProfileView, UsersView, UserView
+from .user import MyProfileView, UserProfileView, UsersView, UserView

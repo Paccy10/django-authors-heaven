@@ -4,7 +4,11 @@ from rest_framework.response import Response
 
 from ...common.utils import should_be_admin
 from ...profiles.models import Profile
-from ...profiles.serializers import EditProfileSerializer, ProfileDisplaySerializer
+from ...profiles.serializers import (
+    EditProfileSerializer,
+    ProfileDisplaySerializer,
+    UserProfileSerializer,
+)
 from ..models import User
 from ..serializers import UserDisplaySerializer
 
@@ -78,5 +82,17 @@ class UserView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     lookup_field = "id"
 
     @should_be_admin()
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+class UserProfileView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    """Get another user profile view"""
+
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "id"
+
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

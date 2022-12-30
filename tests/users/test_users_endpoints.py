@@ -67,3 +67,10 @@ class TestGetUserEndpoint:
 
         assert response.status_code == 200
         assert response.json()["email"] == "active@example.com"
+
+    def test_get_user_with_unexisted_id_fails(self, admin_api_client):
+        url = reverse("get-user", args=["sdfdd"])
+        response = admin_api_client.get(url)
+
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Not found."

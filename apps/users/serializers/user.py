@@ -1,9 +1,11 @@
 from django.core.validators import RegexValidator
+from django_countries.serializer_fields import CountryField
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from ...common.serializers import BaseSerializer
-from ...common.utils import validate_unique_value
+from ...common.utils import get_country_name, validate_unique_value
 from ..error_messages import errors
 from ..models import User
 
@@ -112,12 +114,12 @@ class UserSerializer(serializers.ModelSerializer):
 class UserDisplaySerializer(serializers.ModelSerializer):
     """User display serializer"""
 
-    phone_number = serializers.SerializerMethodField()
-    about_me = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
-    gender = serializers.SerializerMethodField()
+    phone_number = PhoneNumberField(source="profile.phone_number")
+    about_me = serializers.CharField(source="profile.about_me")
+    avatar = serializers.ImageField(source="profile.avatar")
+    gender = serializers.CharField(source="profile.gender")
     country = serializers.SerializerMethodField()
-    city = serializers.SerializerMethodField()
+    city = serializers.CharField(source="profile.city")
 
     class Meta:
         model = User
@@ -137,23 +139,5 @@ class UserDisplaySerializer(serializers.ModelSerializer):
             "city",
         ] + BaseSerializer.Meta.fields
 
-    def get_phone_number(self, user):
-        return str(user.profile.phone_number) if user.profile.phone_number else None
-
-    def get_about_me(self, user):
-        return user.profile.about_me
-
-    def get_avatar(self, user):
-        request = self.context.get("request")
-        avatar = user.profile.avatar
-        return request.build_absolute_uri(avatar.url) if avatar else None
-
-    def get_gender(self, user):
-        return user.profile.gender
-
     def get_country(self, user):
-        country = user.profile.country
-        return country.name if country else None
-
-    def get_city(self, user):
-        return user.profile.city
+        return get_country_name(user.profile.country)
