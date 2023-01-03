@@ -3,9 +3,10 @@ import json
 import pytest
 from django.urls import reverse
 
-from tests.constants import JSON_CONTENT_TYPE
-from ..utils import get_article_dynamic_url
 from apps.articles.models import Article
+from tests.constants import JSON_CONTENT_TYPE
+
+from ..utils import get_article_dynamic_url
 
 
 @pytest.mark.django_db

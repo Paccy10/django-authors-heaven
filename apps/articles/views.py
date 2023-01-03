@@ -1,9 +1,9 @@
 from rest_framework import generics, mixins
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Article
-from .serializers import NewArticleSerializer, ArticleDisplaySerializer
 from .helpers.utils import filter_queryset
+from .models import Article
+from .serializers import ArticleDisplaySerializer, NewArticleSerializer
 
 
 class ArticlesView(
