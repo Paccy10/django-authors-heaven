@@ -56,7 +56,7 @@ class UsersView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = UserDisplaySerializer
     permission_classes = [IsAuthenticated]
-    ordering = ["-id"]
+    ordering = ["-pkid"]
     search_fields = [
         "first_name",
         "last_name",

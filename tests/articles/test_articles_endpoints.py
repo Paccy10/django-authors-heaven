@@ -3,7 +3,10 @@ import json
 import pytest
 from django.urls import reverse
 
+from apps.articles.models import Article
 from tests.constants import JSON_CONTENT_TYPE
+
+from ..utils import get_article_dynamic_url
 
 
 @pytest.mark.django_db
@@ -113,3 +116,63 @@ class TestCreateArticleEndpoint:
 
         assert response.status_code == 201
         assert response.json()["slug"] != base_article.slug
+
+
+@pytest.mark.django_db
+class TestGetAllArticlesEndpoint:
+    """Test get all articles endpoint"""
+
+    url = reverse("all-articles")
+
+    def test_get_all_articles_with_unauthorized_user_fails(self, auth_api_client):
+        auth_api_client.credentials()
+        response = auth_api_client.get(self.url)
+
+        assert response.status_code == 401
+        assert (
+            response.json()["detail"] == "Authentication credentials were not provided."
+        )
+
+    def test_get_all_articles_succeeds(self, admin_api_client, base_article):
+        response = admin_api_client.get(self.url)
+
+        assert response.status_code == 200
+        assert len(response.json()) == 1
+
+    def test_get_all_articles_by_filtering_succeeds(
+        self, auth_api_client, base_article
+    ):
+        response = auth_api_client.get(self.url)
+
+        assert response.status_code == 200
+        assert len(response.json()) == 0
+
+
+class TestGetSingleArticleEndpoint:
+    """Test get single article endpoint"""
+
+    def test_get_article_with_unauthorized_user_fails(
+        self, admin_api_client, base_article
+    ):
+        admin_api_client.credentials()
+        url = get_article_dynamic_url()
+        response = admin_api_client.get(url)
+
+        assert response.status_code == 401
+        assert (
+            response.json()["detail"] == "Authentication credentials were not provided."
+        )
+
+    def test_get_article_succeeds(self, admin_api_client, base_article):
+        url = get_article_dynamic_url()
+        response = admin_api_client.get(url)
+
+        assert response.status_code == 200
+        assert response.json()["title"] == base_article.title
+
+    def test_get_article_with_unexisted_slug_fails(self, auth_api_client):
+        url = reverse("single-article", args=["sdfsdf"])
+        response = auth_api_client.get(url)
+
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Not found."

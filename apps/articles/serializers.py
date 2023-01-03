@@ -40,3 +40,18 @@ class NewArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
         validated_data["slug"] = generate_slug(validated_data["title"])
         validated_data["author"] = self.context["request"].user
         return super().create(validated_data)
+
+
+class ArticleDisplaySerializer(TaggitSerializer, serializers.ModelSerializer):
+    tags = TagListSerializerField(read_only=True)
+    author = AuthorSerializer(read_only=True)
+
+    class Meta:
+        model = Article
+        fields = [
+            "title",
+            "slug",
+            "body",
+            "tags",
+            "author",
+        ] + BaseSerializer.Meta.fields
