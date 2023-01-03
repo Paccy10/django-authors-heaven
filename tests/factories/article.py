@@ -10,7 +10,7 @@ faker = FakerFactory.create()
 class ArticleFactory(factory.django.DjangoModelFactory):
     """Article factory"""
 
-    title = factory.LazyAttribute(lambda x: faker.sentence(nb_words=5))
+    title = factory.LazyAttribute(lambda x: "new-title")
     body = factory.LazyAttribute(lambda x: faker.paragraph(nb_sentences=5))
     slug = factory.LazyAttribute(lambda x: generate_slug(x.title))
     tags = factory.LazyAttribute(lambda x: ["tag1", "tag2"])
