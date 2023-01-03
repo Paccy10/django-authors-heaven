@@ -20,4 +20,5 @@ urlpatterns = [
         name="swagger-doc",
     ),
     path("users/", include("apps.users.urls")),
+    path("articles/", include("apps.articles.urls")),
 ]

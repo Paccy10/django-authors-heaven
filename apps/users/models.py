@@ -13,6 +13,8 @@ AUTH_PROVIDERS = {
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
+    """Custom user model"""
+
     username = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
