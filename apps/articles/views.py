@@ -34,7 +34,9 @@ class ArticlesView(
         return self.list(request, *args, **kwargs)
 
 
-class ArticleView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class ArticleView(
+    mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView
+):
     """Artcicle view"""
 
     serializer_class = ArticleDisplaySerializer
@@ -46,3 +48,6 @@ class ArticleView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
