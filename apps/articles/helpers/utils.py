@@ -16,3 +16,10 @@ def generate_slug(title, prefix=None):
             random.choices(string.ascii_lowercase + string.digits, k=7)
         )
         return generate_slug(title, random_str)
+
+
+def filter_queryset(queryset, user):
+    if user.is_admin:
+        return queryset
+
+    return queryset.filter(author=user)

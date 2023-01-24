@@ -24,12 +24,6 @@ def validate_unique_value(**kwargs):
 
     row = model.objects.filter(**query).first()
 
-    # this works on updating
-    if row and instance:
-        if row.pkid != instance.pkid:
-            raise ConflictException(errors[field]["unique"])
-
-    # this works on first creation
     if row and not instance:
         raise ConflictException(errors[field]["unique"])
 
