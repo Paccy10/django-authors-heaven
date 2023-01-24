@@ -176,3 +176,46 @@ class TestGetSingleArticleEndpoint:
 
         assert response.status_code == 404
         assert response.json()["detail"] == "Not found."
+
+
+class TestUpdateArticleEndpoint:
+    """Test update article endpoint"""
+
+    data = {"title": "updated-title", "body": "updated-body"}
+
+    def test_update_article_with_unauthorized_user_fails(
+        self, admin_api_client, base_article
+    ):
+        admin_api_client.credentials()
+        url = get_article_dynamic_url()
+        data = self.data.copy()
+        data = json.dumps(data)
+        response = admin_api_client.patch(
+            url, data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 401
+        assert (
+            response.json()["detail"] == "Authentication credentials were not provided."
+        )
+
+    def test_get_article_succeeds(self, admin_api_client, base_article):
+        url = get_article_dynamic_url()
+        data = self.data.copy()
+        data = json.dumps(data)
+        response = admin_api_client.patch(
+            url, data=data, content_type=JSON_CONTENT_TYPE
+        )
+
+        assert response.status_code == 200
+        assert response.json()["title"] != base_article.title
+        assert response.json()["body"] != base_article.body
+
+    def test_get_article_with_unexisted_slug_fails(self, auth_api_client):
+        url = reverse("single-article", args=["sdfsdf"])
+        data = self.data.copy()
+        data = json.dumps(data)
+        response = auth_api_client.patch(url, data=data, content_type=JSON_CONTENT_TYPE)
+
+        assert response.status_code == 404
+        assert response.json()["detail"] == "Not found."
